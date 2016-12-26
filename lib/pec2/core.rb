@@ -8,7 +8,6 @@ require 'timeout'
 
 module Pec2
   class Core
-    TIME_OUT = 3
 
     def initialize
       @logger = Logger.new(STDOUT)
