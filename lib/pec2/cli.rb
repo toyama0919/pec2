@@ -20,6 +20,7 @@ module Pec2
     option :tag, aliases: '-t', type: :hash, default: {}, desc: 'tag'
     option :user, aliases: '-u', type: :string, desc: 'user'
     option :log, aliases: '-o', type: :string, desc: 'log'
+    option :parallel, aliases: '-p', type: :numeric, desc: 'parallel'
     option :print, aliases: '-P', type: :boolean, default: false, desc: 'print stdout.'
     def search_tag
       Tempfile.create("pec2") do |f|
@@ -44,6 +45,10 @@ module Pec2
 
         if options[:log]
           cmd = "#{cmd} -o #{options[:log]}"
+        end
+
+        if options[:parallel]
+          cmd = "#{cmd} -p #{options[:parallel]}"
         end
 
         if options[:sudo_password]
