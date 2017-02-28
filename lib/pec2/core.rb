@@ -5,6 +5,9 @@ require 'open-uri'
 require 'json'
 require 'timeout'
 
+class Pec2Mash < Hashie::Mash
+  disable_warnings
+end
 
 module Pec2
   class Core
@@ -23,7 +26,7 @@ module Pec2
       filter << { name: 'instance-state-name', values: ['running'] }
       @ec2.describe_instances(
         filters: filter
-      ).data.to_h[:reservations].map { |instance| Hashie::Mash.new(instance[:instances].first) }
+      ).data.to_h[:reservations].map { |instance| Pec2Mash.new(instance[:instances].first) }
     end
 
     def get_document
