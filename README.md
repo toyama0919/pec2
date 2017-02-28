@@ -1,5 +1,9 @@
 # pec2 [![Build Status](https://secure.travis-ci.org/toyama0919/pec2.png?branch=master)](http://travis-ci.org/toyama0919/pec2)
 
+Run parallel ssh command for ec2.
+
+Commands can run to multiple hosts at once using the ec2 tag.
+
 ## Examples
 
     $ bundle exec pec2 -t Project:project_a Stages:production -c 'hostname'

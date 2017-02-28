@@ -1,11 +1,11 @@
 require 'aws-sdk'
-require 'hashie'
+require 'hashie/mash'
 require 'logger'
 require 'open-uri'
 require 'json'
 require 'timeout'
 
-class Pec2Mash < Hashie::Mash
+class Pec2Mash < ::Hashie::Mash
   disable_warnings
 end
 
