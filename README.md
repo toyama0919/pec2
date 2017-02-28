@@ -6,8 +6,15 @@ TODO: Description
 
 ## Examples
 
-    $ pec2 sample
-    #=> hoge
+    $ bundle exec pec2 -t Project:project_a Stages:production -c 'hostname'
+
+## sudo Examples
+
+    $ bundle exec pec2 -t Project:project_a Stages:production -c 'sudo hostname' -P -s XXXXXXX
+
+## sudo Examples
+
+    $ bundle exec pec2 -t Project:embulk Stages:production -c 'hostname' -P -p 150
 
 ## Installation
 
