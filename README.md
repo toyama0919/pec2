@@ -1,18 +1,14 @@
 # pec2 [![Build Status](https://secure.travis-ci.org/toyama0919/pec2.png?branch=master)](http://travis-ci.org/toyama0919/pec2)
 
-TODO: Summary
-
-TODO: Description
-
 ## Examples
 
     $ bundle exec pec2 -t Project:project_a Stages:production -c 'hostname'
 
 ## sudo Examples
 
-    $ bundle exec pec2 -t Project:project_a Stages:production -c 'sudo hostname' -P -s XXXXXXX
+    $ bundle exec pec2 -t Project:project_a Stages:production -c 'sudo hostname' -P -s ${sudo_password}
 
-## sudo Examples
+## Parallel number control
 
     $ bundle exec pec2 -t Project:embulk Stages:production -c 'hostname' -P -p 150
 
