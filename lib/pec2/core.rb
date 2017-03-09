@@ -6,7 +6,7 @@ require 'json'
 require 'timeout'
 
 class Pec2Mash < ::Hashie::Mash
-  disable_warnings
+  disable_warnings if respond_to?(:disable_warnings)
 end
 
 module Pec2
