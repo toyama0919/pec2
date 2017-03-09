@@ -1,6 +1,7 @@
 require "thor"
 require "tempfile"
 require "logger"
+require 'shellwords'
 
 module Pec2
   class CLI < Thor
@@ -60,9 +61,9 @@ module Pec2
         end
 
         if options[:sudo_password]
-          cmd = %Q{(echo #{options[:sudo_password]}) | #{cmd} -I '#{options[:command]}'}
+          cmd = %Q{(echo #{options[:sudo_password]}) | #{cmd} -I #{Shellwords.escape(options[:command])}}
         else
-          cmd = %Q{#{cmd} -i '#{options[:command]}'}
+          cmd = %Q{#{cmd} -i #{Shellwords.escape(options[:command])}}
         end
         system(cmd)
       end
