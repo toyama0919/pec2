@@ -4,6 +4,18 @@ Run parallel ssh command for ec2.
 
 Commands can run to multiple hosts at once using the ec2 tag.
 
+## Required pssh
+
+#### Mac
+```
+$ brew install pssh
+```
+
+#### Linux
+```
+$ yum --enablerepo=epel -y install pssh
+```
+
 ## Examples
 
     $ bundle exec pec2 -t Project:project_a Stages:production -c 'hostname'
@@ -12,7 +24,7 @@ Commands can run to multiple hosts at once using the ec2 tag.
 
     $ bundle exec pec2 -t Project:project_a Stages:production -c 'sudo hostname' -P -s ${sudo_password}
 
-## Parallel number control
+## Parallel number control(150 threads)
 
     $ bundle exec pec2 -t Project:embulk Stages:production -c 'hostname' -P -p 150
 
