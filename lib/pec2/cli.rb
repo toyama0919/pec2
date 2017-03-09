@@ -36,7 +36,8 @@ module Pec2
         end
 
         if addresses.empty?
-          raise "no host."
+          @logger.error(%Q{no host tag #{options[:tag]}.})
+          raise
         end
 
         File.write(f.path, addresses.join("\n"))
