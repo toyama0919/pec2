@@ -1,5 +1,6 @@
 require "thor"
 require "tempfile"
+require "logger"
 
 module Pec2
   class CLI < Thor
@@ -12,6 +13,12 @@ module Pec2
       @global_options = config[:shell].base.options
       @core = Core.new
       @pssh_path = `which pssh`.strip
+      @logger = Logger.new(STDOUT)
+
+      if @pssh_path && @pssh_path.empty?
+        @logger.error(%Q{Please install pssh command.})
+        raise
+      end
     end
 
     desc 'search_tag', 'search tag'
