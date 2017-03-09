@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'thor'
   gem.add_dependency 'aws-sdk'
-  gem.add_dependency 'hashie', '>= 3.5'
+  gem.add_dependency 'hashie'
 
   gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'pry'
