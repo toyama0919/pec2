@@ -4,17 +4,7 @@ Run parallel ssh command for ec2.
 
 Commands can run to multiple hosts at once using the ec2 tag.
 
-## Required pssh
-
-#### Mac
-```
-$ brew install pssh
-```
-
-#### Linux
-```
-$ yum --enablerepo=epel -y install pssh
-```
+required python.
 
 ## Examples
 
