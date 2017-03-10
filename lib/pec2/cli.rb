@@ -15,11 +15,6 @@ module Pec2
       @core = Core.new
       @pssh_path = File.expand_path('../../../exe/bin/pssh', __FILE__)
       @logger = Logger.new(STDOUT)
-
-      if @pssh_path && @pssh_path.empty?
-        @logger.error(%Q{Please install pssh command.})
-        raise
-      end
     end
 
     desc 'search_tag', 'search tag'
