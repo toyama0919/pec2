@@ -8,15 +8,15 @@ required python.
 
 ## Examples
 
-    $ bundle exec pec2 -t Project:project_a Stages:production -c 'hostname'
+    $ pec2 -t Project:project_a Stages:production -c 'hostname'
 
 ## sudo Examples
 
-    $ bundle exec pec2 -t Project:project_a Stages:production -c 'sudo hostname' -P -s ${sudo_password}
+    $ pec2 -t Project:project_a Stages:production -c 'sudo hostname' -P -s ${sudo_password}
 
 ## Parallel number control(150 threads)
 
-    $ bundle exec pec2 -t Project:embulk Stages:production -c 'hostname' -P -p 150
+    $ pec2 -t Project:embulk Stages:production -c 'hostname' -P -p 150
 
 ## Installation
 
@@ -50,9 +50,3 @@ Or install it yourself as:
 * [Issues](https://github.com/toyama0919/pec2/issues)
 * [Documentation](http://rubydoc.info/gems/pec2/frames)
 * [Email](mailto:toyama0919@gmail.com)
-
-## Copyright
-
-Copyright (c) 2016 toyama0919
-
-See [LICENSE.txt](../LICENSE.txt) for details.
