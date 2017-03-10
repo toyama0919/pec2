@@ -13,7 +13,7 @@ module Pec2
       super(args, options, config)
       @global_options = config[:shell].base.options
       @core = Core.new
-      @pssh_path = `which pssh`.strip
+      @pssh_path = File.expand_path('../../../exe/bin/pssh', __FILE__)
       @logger = Logger.new(STDOUT)
 
       if @pssh_path && @pssh_path.empty?

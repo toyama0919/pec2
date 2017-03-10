@@ -3,6 +3,7 @@ doc/
 pkg/
 tmp/
 **/*.gem
+**/*.pyc
 .yardoc/
 .bundle/
 vendor/bundle/
