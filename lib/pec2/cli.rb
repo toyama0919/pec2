@@ -13,7 +13,6 @@ module Pec2
       super(args, options, config)
       @global_options = config[:shell].base.options
       @core = Core.new
-      @pssh_path = File.expand_path('../../../exe/bin/pssh', __FILE__)
       @logger = Logger.new(STDOUT)
     end
 
@@ -49,32 +48,17 @@ module Pec2
         fp
       }
 
-      pssh_command = "#{@pssh_path} -t 0 -x '-tt' -h #{tf.path} -O StrictHostKeyChecking=no"
-      if options[:print]
-        pssh_command = "#{pssh_command} -P"
-      end
-
-      if options[:user]
-        pssh_command = "#{pssh_command} -l #{options[:user]}"
-      end
-
-      if options[:log]
-        pssh_command = "#{pssh_command} -o #{options[:log]}"
-      end
-
-      if options[:parallel]
-        pssh_command = "#{pssh_command} -p #{options[:parallel]}"
-      end
+      pssh = Pssh.new(options, tf.path)
 
       interactive = options[:command] ? false : true
 
       if interactive
         while true
           command = ask(">:")
-          exec_pssh_command(pssh_command, command, options[:sudo_password])
+          pssh.exec_pssh_command(command)
         end
       else
-        ret = exec_pssh_command(pssh_command, options[:command], options[:sudo_password])
+        ret = pssh.exec_pssh_command(options[:command])
         unless ret
           tf.close
           exit 1
@@ -86,19 +70,6 @@ module Pec2
     desc 'version', 'show version'
     def version
       puts VERSION
-    end
-
-    private
-
-    def exec_pssh_command(pssh_command, command, sudo_password = nil)
-      return false if command.nil? || command.empty?
-      if sudo_password
-        pssh_command = %Q{(echo #{sudo_password}) | #{pssh_command} -I #{Shellwords.escape(command)}}
-      else
-        pssh_command = %Q{#{pssh_command} -i #{Shellwords.escape(command)}}
-      end
-
-      system(pssh_command)
     end
   end
 end
