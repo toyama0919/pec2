@@ -7,7 +7,7 @@ module Pec2
   class CLI < Thor
 
     map '-v' => :version
-    default_task :search_tag
+    default_task :run_command
 
     def initialize(args = [], options = {}, config = {})
       super(args, options, config)
@@ -17,7 +17,7 @@ module Pec2
       @logger = Logger.new(STDOUT)
     end
 
-    desc 'search_tag', 'search tag'
+    desc 'run_command', 'run command'
     option :command, aliases: '-c', type: :string, required: true, desc: 'command'
     option :sudo_password, aliases: '-s', type: :string, desc: 'sudo_password'
     option :tag, aliases: '-t', type: :hash, default: {}, desc: 'tag'
@@ -25,7 +25,7 @@ module Pec2
     option :log, aliases: '-o', type: :string, desc: 'log'
     option :parallel, aliases: '-p', type: :numeric, desc: 'parallel'
     option :print, aliases: '-P', type: :boolean, default: false, desc: 'print stdout.'
-    def search_tag
+    def run_command
       cmd = ""
       addresses = @core.instances_hash(options[:tag]).map do |instance|
         instance.private_ip_address
