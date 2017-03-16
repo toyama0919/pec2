@@ -26,7 +26,6 @@ module Pec2
     option :parallel, aliases: '-p', type: :numeric, desc: 'parallel'
     option :print, aliases: '-P', type: :boolean, default: false, desc: 'print stdout.'
     def run_command
-      cmd = ""
       addresses = @core.instances_hash(options[:tag]).map do |instance|
         instance.private_ip_address
       end
