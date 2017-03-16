@@ -32,8 +32,8 @@ module Pec2
       end
 
       if addresses.empty?
-        @logger.error(%Q{no host tag #{options[:tag]}.})
-        raise
+        @logger.info(%Q{no host tag #{options[:tag]}.})
+        exit
       end
 
       tf = Tempfile.open("pec2") { |fp|
@@ -64,7 +64,10 @@ module Pec2
         cmd = %Q{#{cmd} -i #{Shellwords.escape(options[:command])}}
       end
 
-      system(cmd)
+      unless system(cmd)
+        tf.close
+        exit 1
+      end
       tf.close
     end
 
