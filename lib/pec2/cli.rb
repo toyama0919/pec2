@@ -18,16 +18,23 @@ module Pec2
     end
 
     desc 'run_command', 'run command'
-    option :command, aliases: '-c', type: :string, required: true, desc: 'command'
+    option :command, aliases: '-c', type: :string, desc: 'command'
     option :sudo_password, aliases: '-s', type: :string, desc: 'sudo_password'
     option :tag, aliases: '-t', type: :hash, default: {}, desc: 'tag'
     option :user, aliases: '-u', type: :string, desc: 'user'
     option :log, aliases: '-o', type: :string, desc: 'log'
     option :parallel, aliases: '-p', type: :numeric, desc: 'parallel'
     option :print, aliases: '-P', type: :boolean, default: false, desc: 'print stdout.'
+    option :resolve, aliases: '--resolve', type: :string, default: 'private_ip_address', enum: ['private_ip_address', 'public_ip_address', 'name_tag'], desc: 'resolve'
     def run_command
       addresses = @core.instances_hash(options[:tag]).map do |instance|
-        instance.private_ip_address
+        if options[:resolve] == 'private_ip_address'
+          instance.private_ip_address
+        elsif options[:resolve] == 'public_ip_address'
+          instance.public_ip_address
+        elsif options[:resolve] == 'name_tag'
+          instance.tags.select{|tag| tag["key"] == "Name" }.first["value"]
+        end
       end
 
       if addresses.empty?
@@ -35,37 +42,43 @@ module Pec2
         exit
       end
 
+      @logger.info(%Q{listing connection to #{addresses.join(', ')}.})
+
       tf = Tempfile.open("pec2") { |fp|
         fp.puts(addresses.join("\n"))
         fp
       }
 
-      cmd = "#{@pssh_path} -t 0 -x '-tt' -h #{tf.path} -O StrictHostKeyChecking=no"
+      pssh_command = "#{@pssh_path} -t 0 -x '-tt' -h #{tf.path} -O StrictHostKeyChecking=no"
       if options[:print]
-        cmd = "#{cmd} -P"
+        pssh_command = "#{pssh_command} -P"
       end
 
       if options[:user]
-        cmd = "#{cmd} -l #{options[:user]}"
+        pssh_command = "#{pssh_command} -l #{options[:user]}"
       end
 
       if options[:log]
-        cmd = "#{cmd} -o #{options[:log]}"
+        pssh_command = "#{pssh_command} -o #{options[:log]}"
       end
 
       if options[:parallel]
-        cmd = "#{cmd} -p #{options[:parallel]}"
+        pssh_command = "#{pssh_command} -p #{options[:parallel]}"
       end
 
-      if options[:sudo_password]
-        cmd = %Q{(echo #{options[:sudo_password]}) | #{cmd} -I #{Shellwords.escape(options[:command])}}
+      interactive = options[:command] ? false : true
+
+      if interactive
+        while true
+          command = ask(">:")
+          exec_pssh_command(pssh_command, command, options[:sudo_password])
+        end
       else
-        cmd = %Q{#{cmd} -i #{Shellwords.escape(options[:command])}}
-      end
-
-      unless system(cmd)
-        tf.close
-        exit 1
+        ret = exec_pssh_command(pssh_command, options[:command], options[:sudo_password])
+        unless ret
+          tf.close
+          exit 1
+        end
       end
       tf.close
     end
@@ -73,6 +86,19 @@ module Pec2
     desc 'version', 'show version'
     def version
       puts VERSION
+    end
+
+    private
+
+    def exec_pssh_command(pssh_command, command, sudo_password = nil)
+      return false if command.nil? || command.empty?
+      if sudo_password
+        pssh_command = %Q{(echo #{sudo_password}) | #{pssh_command} -I #{Shellwords.escape(command)}}
+      else
+        pssh_command = %Q{#{pssh_command} -i #{Shellwords.escape(command)}}
+      end
+
+      system(pssh_command)
     end
   end
 end
