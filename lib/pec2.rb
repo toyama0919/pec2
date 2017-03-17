@@ -1,5 +1,5 @@
 require 'pec2/version'
 require 'pec2/constants'
-require 'pec2/core'
+require 'pec2/ec2'
 require 'pec2/pssh'
 require 'pec2/cli'

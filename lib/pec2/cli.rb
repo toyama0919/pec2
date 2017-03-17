@@ -11,7 +11,7 @@ module Pec2
     def initialize(args = [], options = {}, config = {})
       super(args, options, config)
       @global_options = config[:shell].base.options
-      @core = Core.new
+      @core = Ec2.new
       @logger = Logger.new(STDOUT)
     end
 

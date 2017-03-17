@@ -10,7 +10,7 @@ class Pec2Mash < ::Hashie::Mash
 end
 
 module Pec2
-  class Core
+  class Ec2
 
     def initialize
       @logger = Logger.new(STDOUT)
