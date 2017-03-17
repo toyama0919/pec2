@@ -3,6 +3,7 @@ require 'pec2'
 
 describe Pec2::CLI do
   before do
+    ENV['AWS_REGION'] = 'us-east-1'
   end
 
   it "should stdout sample" do
