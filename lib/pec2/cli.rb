@@ -1,7 +1,6 @@
 require "thor"
 require "tempfile"
 require "logger"
-require 'shellwords'
 
 module Pec2
   class CLI < Thor

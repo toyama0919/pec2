@@ -1,3 +1,5 @@
+require 'shellwords'
+
 module Pec2
   class Pssh
 
