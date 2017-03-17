@@ -25,13 +25,17 @@ module Pec2
       @sudo_password = options[:sudo_password]
     end
 
+    def build_pssh_command(command)
+      if @sudo_password
+        %Q{(echo #{@sudo_password}) | #{@pssh_command} -I #{Shellwords.escape(command)}}
+      else
+        %Q{#{@pssh_command} -i #{Shellwords.escape(command)}}
+      end
+    end
+
     def exec_pssh_command(command)
       return false if command.nil? || command.empty?
-      if @sudo_password
-        build_command = %Q{(echo #{@sudo_password}) | #{@pssh_command} -I #{Shellwords.escape(command)}}
-      else
-        build_command = %Q{#{@pssh_command} -i #{Shellwords.escape(command)}}
-      end
+      build_command = build_pssh_command(command)
       system(build_command)
     end
   end

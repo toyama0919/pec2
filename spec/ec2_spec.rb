@@ -1,9 +1,8 @@
 require 'spec_helper'
 require 'pec2'
 
-describe Pec2::Core do
+describe Pec2::Ec2 do
   before do
-    @core = Core.new
   end
 
   after do
