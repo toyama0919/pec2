@@ -5,7 +5,7 @@ module Pec2
 
     PSSH_PATH = File.expand_path('../../../exe/bin/pssh', __FILE__)
 
-    def initialize(options, hosts_file)
+    def initialize(options, hosts_file, parallel = 1)
       @pssh_command = "#{PSSH_PATH} -t 0 -x '-tt' -h #{hosts_file} -O StrictHostKeyChecking=no"
       if options[:print]
         @pssh_command = "#{@pssh_command} -P"
@@ -19,9 +19,7 @@ module Pec2
         @pssh_command = "#{@pssh_command} -o #{options[:log]}"
       end
 
-      if options[:parallel]
-        @pssh_command = "#{@pssh_command} -p #{options[:parallel]}"
-      end
+      @pssh_command = "#{@pssh_command} -p #{options[:parallel] || parallel}"
       @sudo_password = options[:sudo_password]
     end
 

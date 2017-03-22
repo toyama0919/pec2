@@ -48,7 +48,7 @@ module Pec2
         fp
       }
 
-      pssh = Pssh.new(options, tf.path)
+      pssh = Pssh.new(options, tf.path, addresses.size)
 
       interactive = options[:command] ? false : true
 
