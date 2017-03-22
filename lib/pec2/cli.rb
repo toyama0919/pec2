@@ -40,6 +40,7 @@ module Pec2
         exit
       end
 
+      @logger.info(%Q{connection size #{addresses.size}.})
       @logger.info(%Q{listing connection to #{addresses.join(', ')}.})
 
       tf = Tempfile.open("pec2") { |fp|
