@@ -9,7 +9,9 @@ module Pec2
     def initialize(options, servers, parallel = 1)
       @parallel = parallel
       color_index = 0
-      colors = String.colors.select{ |color| !color.to_s.start_with?('light_') }
+      colors = String.colors.select{ |color|
+        !color.to_s.start_with?('light_') && !color.to_s.include?('red') && !color.to_s.include?('yellow')
+      }
       @servers = servers.map { |server|
         result = {}
         result[:host] = server
