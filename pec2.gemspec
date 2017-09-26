@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'hashie'
   gem.add_dependency 'net-ssh'
   gem.add_dependency 'parallel'
+  gem.add_dependency 'colorize'
 
   gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'pry'
