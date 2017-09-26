@@ -1,14 +1,9 @@
 require 'spec_helper'
 require 'pec2'
-require 'tempfile'
 
 describe Pec2::Pssh do
   before do
-    @tf = Tempfile.open("pec2") { |fp|
-      fp.puts("127.0.0.1")
-      fp
-    }
-    @pssh = Pssh.new({}, @tf.path)
+    @pssh = Pssh.new({}, ["127.0.0.1"])
   end
 
   it "test exec_pssh_command empty" do
@@ -24,6 +19,5 @@ describe Pec2::Pssh do
   end
 
   after do
-    @tf.close
   end
 end
