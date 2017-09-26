@@ -26,12 +26,16 @@ module Pec2
       @user = options[:user]
       @print = options[:print]
       @sudo_password = options[:sudo_password]
+      @ssh_options = {
+        verify_host_key: false,
+        user_known_hosts_file: '/dev/null',
+      }
     end
 
     def exec_pssh_command(command)
       return false if command.nil? || command.empty?
       Parallel.each(@servers, in_threads: @parallel) do |server|
-        Net::SSH.start(server[:host], @user) do |ssh|
+        Net::SSH.start(server[:host], @user, @ssh_options) do |ssh|
           channel = ssh.open_channel do |channel, success|
             channel.on_data do |channel, data|
               if data =~ /^\[sudo\] password for /
