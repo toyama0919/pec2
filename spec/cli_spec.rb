@@ -21,7 +21,6 @@ describe Pec2::CLI do
     expect(output).to include('--sudo-password')
     expect(output).to include('--tag')
     expect(output).to include('--user')
-    expect(output).to include('--log')
     expect(output).to include('--parallel')
     expect(output).to include('--print')
   end

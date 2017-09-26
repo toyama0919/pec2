@@ -1,40 +1,41 @@
 require 'shellwords'
+require 'net/ssh'
+require 'parallel'
 
 module Pec2
   class Pssh
 
-    PSSH_PATH = File.expand_path('../../../exe/bin/pssh', __FILE__)
-
-    def initialize(options, hosts_file, parallel = 1)
-      @pssh_command = "#{PSSH_PATH} -t 0 -x '-tt' -h #{hosts_file} -O StrictHostKeyChecking=no"
-      if options[:print]
-        @pssh_command = "#{@pssh_command} -P"
-      end
-
-      if options[:user]
-        @pssh_command = "#{@pssh_command} -l #{options[:user]}"
-      end
-
-      if options[:log]
-        @pssh_command = "#{@pssh_command} -o #{options[:log]}"
-      end
-
-      @pssh_command = "#{@pssh_command} -p #{options[:parallel] || parallel}"
+    def initialize(options, servers, parallel = 1)
+      @parallel = parallel
+      @servers = servers
+      @user = options[:user]
+      @print = options[:print]
       @sudo_password = options[:sudo_password]
-    end
-
-    def build_pssh_command(command)
-      if @sudo_password
-        %Q{(echo #{@sudo_password}) | #{@pssh_command} -I #{Shellwords.escape(command)}}
-      else
-        %Q{#{@pssh_command} -i #{Shellwords.escape(command)}}
-      end
     end
 
     def exec_pssh_command(command)
       return false if command.nil? || command.empty?
-      build_command = build_pssh_command(command)
-      system(build_command)
+      Parallel.each(@servers, in_threads: @parallel) do |server|
+        Net::SSH.start(server, @user) do |ssh|
+          channel = ssh.open_channel do |channel, success|
+            channel.on_data do |channel, data|
+              if data =~ /^\[sudo\] password for /
+                channel.send_data "#{@sudo_password}\n"
+              else
+                data.to_s.lines.each do |line|
+                  if @print
+                    puts %Q{#{server}:#{line}}
+                  end
+                end
+              end
+            end
+            channel.request_pty
+            channel.exec(command)
+            channel.wait
+          end
+          channel.wait
+        end
+      end
     end
   end
 end

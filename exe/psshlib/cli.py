@@ -6,7 +6,6 @@ import os
 import shlex
 import sys
 import textwrap
-import version
 
 _DEFAULT_PARALLELISM = 32
 _DEFAULT_TIMEOUT     = 0 # "infinity" by default
@@ -18,8 +17,7 @@ def common_parser():
     """
     # The "resolve" conflict handler avoids errors from the hosts option
     # conflicting with the help option.
-    parser = optparse.OptionParser(conflict_handler='resolve',
-            version=version.VERSION)
+    parser = optparse.OptionParser(conflict_handler='resolve')
     # Ensure that options appearing after the command are sent to ssh.
     parser.disable_interspersed_args()
     parser.epilog = "Example: pssh -h nodes.txt -l irb2 -o /tmp/foo uptime"

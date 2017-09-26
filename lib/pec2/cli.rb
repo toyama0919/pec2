@@ -20,7 +20,6 @@ module Pec2
     option :sudo_password, aliases: '-s', type: :string, desc: 'sudo_password'
     option :tag, aliases: '-t', type: :hash, default: {}, desc: 'tag'
     option :user, aliases: '-u', type: :string, desc: 'user'
-    option :log, aliases: '-o', type: :string, desc: 'log'
     option :parallel, aliases: '-p', type: :numeric, desc: 'parallel'
     option :print, aliases: '-P', type: :boolean, default: false, desc: 'print stdout.'
     option :resolve, aliases: '--resolve', type: :string, default: 'private_ip_address', enum: ['private_ip_address', 'public_ip_address', 'name_tag'], desc: 'resolve'
@@ -43,12 +42,7 @@ module Pec2
       @logger.info(%Q{connection size #{addresses.size}.})
       @logger.info(%Q{listing connection to #{addresses.join(', ')}.})
 
-      tf = Tempfile.open("pec2") { |fp|
-        fp.puts(addresses.join("\n"))
-        fp
-      }
-
-      pssh = Pssh.new(options, tf.path, addresses.size)
+      pssh = Pssh.new(options, addresses, addresses.size)
 
       interactive = options[:command] ? false : true
 
@@ -60,11 +54,9 @@ module Pec2
       else
         ret = pssh.exec_pssh_command(options[:command])
         unless ret
-          tf.close
           exit 1
         end
       end
-      tf.close
     end
 
     desc 'version', 'show version'
