@@ -30,30 +30,40 @@ module Pec2
         verify_host_key: false,
         user_known_hosts_file: '/dev/null',
       }
+      @logger = Logger.new(STDOUT)
     end
 
     def exec_pssh_command(command)
       return false if command.nil? || command.empty?
+      error_servers = []
       Parallel.each(@servers, in_threads: @parallel) do |server|
-        Net::SSH.start(server[:host], @user, @ssh_options) do |ssh|
-          channel = ssh.open_channel do |channel, success|
-            channel.on_data do |channel, data|
-              if data =~ /^\[sudo\] password for /
-                channel.send_data "#{@sudo_password}\n"
-              else
-                data.to_s.lines.each do |line|
-                  if @print
-                    print %Q{#{server[:host]}:#{line}}.colorize(server[:color])
+        begin
+          Net::SSH.start(server[:host], @user, @ssh_options) do |ssh|
+            channel = ssh.open_channel do |channel, success|
+              channel.on_data do |channel, data|
+                if data =~ /^\[sudo\] password for /
+                  channel.send_data "#{@sudo_password}\n"
+                else
+                  data.to_s.lines.each do |line|
+                    if @print
+                      print %Q{#{server[:host]}:#{line}}.colorize(server[:color])
+                    end
                   end
                 end
               end
+              channel.request_pty
+              channel.exec(command)
+              channel.wait
             end
-            channel.request_pty
-            channel.exec(command)
             channel.wait
           end
-          channel.wait
+        rescue => e
+          error_servers << server[:host]
+          puts "\n#{e.message}\n#{e.backtrace.join("\n")}"
         end
+      end
+      if error_servers.size > 0
+        @logger.error "error servers => #{error_servers.join(', ')}".colorize(:red)
       end
       return true
     end
