@@ -1,4 +1,3 @@
-require 'shellwords'
 require 'net/ssh'
 require 'parallel'
 require 'colorize'
