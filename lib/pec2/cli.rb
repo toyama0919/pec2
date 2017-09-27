@@ -17,6 +17,7 @@ module Pec2
 
     desc 'run_command', 'run command'
     option :command, aliases: '-c', type: :string, desc: 'command'
+    option :file, aliases: '-f', type: :string, desc: 'script file'
     option :sudo_password, aliases: '-s', type: :string, desc: 'sudo_password'
     option :tag, aliases: '-t', type: :hash, default: {}, desc: 'tag'
     option :user, aliases: '-u', type: :string, desc: 'user'
@@ -44,7 +45,9 @@ module Pec2
 
       pssh = Pssh.new(options, addresses, addresses.size)
 
-      interactive = options[:command] ? false : true
+      file_command = options[:file] ? File.read(options[:file]) : nil
+      command = options[:command] || file_command
+      interactive = command ? false : true
 
       if interactive
         while true
@@ -52,7 +55,7 @@ module Pec2
           pssh.exec_pssh_command(command)
         end
       else
-        ret = pssh.exec_pssh_command(options[:command])
+        ret = pssh.exec_pssh_command(command)
         unless ret
           exit 1
         end
