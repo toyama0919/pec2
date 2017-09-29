@@ -34,37 +34,50 @@ module Pec2
 
     def exec_pssh_command(command)
       return false if command.nil? || command.empty?
-      error_servers = []
-      Parallel.each(@servers, in_threads: @parallel) do |server|
-        begin
-          Net::SSH.start(server[:host], @user, @ssh_options) do |ssh|
-            channel = ssh.open_channel do |channel, success|
-              channel.on_data do |channel, data|
-                if data =~ /^\[sudo\] password for /
-                  channel.send_data "#{@sudo_password}\n"
-                else
-                  data.to_s.lines.each do |line|
-                    if @print
-                      print %Q{#{server[:host]}:#{line}}.colorize(server[:color])
-                    end
+      exit_status = {}
+      Parallel.map(@servers, in_threads: @parallel) do |server|
+        exit_status[server[:host]] = exec_ssh(server, command)
+      end
+      errors = exit_status.select {|k, v| v != 0 }
+      if errors.size > 0
+        @logger.error "error servers => #{errors.keys.join(', ')}".colorize(:red)
+        return false
+      end
+      return true
+    end
+
+    private
+
+    def exec_ssh(server, command)
+      exit_code = nil
+      begin
+        Net::SSH.start(server[:host], @user, @ssh_options) do |ssh|
+          channel = ssh.open_channel do |channel, success|
+            channel.on_data do |channel, data|
+              if data =~ /^\[sudo\] password for /
+                channel.send_data "#{@sudo_password}\n"
+              else
+                data.to_s.lines.each do |line|
+                  if @print
+                    print %Q{#{server[:host]}:#{line}}.colorize(server[:color])
                   end
                 end
               end
-              channel.request_pty
-              channel.exec(command)
-              channel.wait
+            end
+            channel.request_pty
+            channel.exec(command) do |ch, success|
+              channel.on_request("exit-status") do |ch,data|
+                exit_code = data.read_long
+              end
             end
             channel.wait
           end
-        rescue => e
-          error_servers << server[:host]
-          puts "\n#{e.message}\n#{e.backtrace.join("\n")}"
+          channel.wait
         end
+      rescue => e
+        puts "\n#{e.message}\n#{e.backtrace.join("\n")}"
       end
-      if error_servers.size > 0
-        @logger.error "error servers => #{error_servers.join(', ')}".colorize(:red)
-      end
-      return true
+      return exit_code
     end
   end
 end
