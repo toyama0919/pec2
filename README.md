@@ -4,8 +4,6 @@ Run parallel ssh command for ec2.
 
 Commands can run to multiple hosts at once using the ec2 tag.
 
-required python.
-
 ## Examples
 
     $ pec2 -t Project:project_a Stages:production -c 'hostname'
