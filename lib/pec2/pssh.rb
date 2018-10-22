@@ -26,7 +26,7 @@ module Pec2
       @print = options[:print]
       @sudo_password = options[:sudo_password]
       @ssh_options = {
-        verify_host_key: false,
+        verify_host_key: :never,
         user_known_hosts_file: '/dev/null',
       }
       @logger = Logger.new(STDOUT)
