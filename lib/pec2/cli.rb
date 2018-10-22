@@ -8,10 +8,11 @@ module Pec2
     map '-v' => :version
     default_task :run_command
 
+    class_option :profile, type: :string, default: nil, desc: 'profile'
     def initialize(args = [], options = {}, config = {})
       super(args, options, config)
       @global_options = config[:shell].base.options
-      @core = Ec2.new
+      @core = Ec2.new(profile: @global_options[:profile])
       @logger = Logger.new(STDOUT)
     end
 

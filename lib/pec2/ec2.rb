@@ -12,10 +12,9 @@ end
 module Pec2
   class Ec2
 
-    def initialize
+    def initialize(profile:)
       @logger = Logger.new(STDOUT)
-      ENV['AWS_REGION'] = ENV['AWS_REGION'] || get_document['region']
-      @ec2 = Aws::EC2::Client.new
+      @ec2 = Aws::EC2::Client.new(get_param(profile))
     end
 
     def instances_hash(condition)
@@ -44,6 +43,22 @@ module Pec2
       rescue Timeout::Error => e
         raise "not EC2 instance"
       end
+    end
+
+    private
+
+    def get_param(profile)
+      param = {}
+      region = if profile
+        param[:profile] = profile
+      else
+        param[:region] = if ENV['AWS_REGION']
+          ENV['AWS_REGION']
+        else
+          Metadata.get_document['region']
+        end
+      end
+      param
     end
   end
 end
