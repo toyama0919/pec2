@@ -49,7 +49,7 @@ module Pec2
 
     def get_param(profile)
       param = {}
-      region = if profile
+      if profile
         param[:profile] = profile
       else
         param[:region] = if ENV['AWS_REGION']
