@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_dependency 'thor'
-  gem.add_dependency 'aws-sdk', '~> 2.x'
+  gem.add_dependency 'aws-sdk-ec2'
   gem.add_dependency 'hashie'
   gem.add_dependency 'net-ssh'
   gem.add_dependency 'parallel'
