@@ -23,6 +23,7 @@ module Pec2
     option :tag, aliases: '-t', type: :hash, default: {}, desc: 'tag'
     option :user, aliases: '-u', type: :string, desc: 'user'
     option :parallel, aliases: '-p', type: :numeric, desc: 'parallel'
+    option :color, type: :boolean, default: false, desc: 'colorize.'
     option :print, aliases: '-P', type: :boolean, default: false, desc: 'print stdout.'
     option :resolve, aliases: '--resolve', type: :string, default: 'private_ip_address', enum: ['private_ip_address', 'public_ip_address', 'name_tag'], desc: 'resolve'
     def run_command

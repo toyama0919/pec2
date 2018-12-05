@@ -22,6 +22,7 @@ module Pec2
         end
         result
       }
+      @color = options[:color]
       @user = options[:user]
       @print = options[:print]
       @sudo_password = options[:sudo_password]
@@ -59,7 +60,8 @@ module Pec2
               else
                 data.to_s.lines.each do |line|
                   if @print
-                    print %Q{#{server[:host]}:#{line}}.colorize(server[:color])
+                    output = %Q{#{server[:host]}:#{line}}
+                    puts (@color ? output.colorize(server[:color]) : output)
                   end
                 end
               end
